@@ -35,6 +35,43 @@ docker compose run --rm app import
 docker compose run --rm app export
 ```
 
+## Наглядный запуск
+
+Одна команда последовательно:
+
+1. Генерирует SQLite-файл с ненормализованной таблицей.
+2. Выгружает исходные данные в CSV и XLSX.
+3. Создаёт нормализованную схему PostgreSQL.
+4. Импортирует данные в таблицы PostgreSQL.
+5. Выгружает нормализованную витрину в CSV и XLSX.
+6. Формирует итоговый отчёт по продажам в CSV и XLSX.
+
+```bash
+cd ~/trrp-vhodnoi-kontrol-2026
+
+git pull origin main
+
+source .venv/bin/activate
+
+set -a
+source .env
+set +a
+
+docker compose up -d db
+
+python -m src.main demo
+
+ls -lh reports/
+```
+
+После запуска открой файлы:
+
+```bash
+xdg-open reports/01_source_denormalized.xlsx
+xdg-open reports/02_normalized_data.xlsx
+xdg-open reports/03_sales_by_day.xlsx
+```
+
 ## Проверка
 Повторный запуск команды `import` безопасен: используются естественные ключи, `ON CONFLICT` и уникальность номера продажи.
 
